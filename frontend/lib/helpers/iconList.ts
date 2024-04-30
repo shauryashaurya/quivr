@@ -1,4 +1,5 @@
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { BiCoin } from "react-icons/bi";
 import {
   BsArrowRightShort,
   BsChatLeftText,
@@ -7,6 +8,7 @@ import {
 import { CgSoftwareDownload } from "react-icons/cg";
 import { CiFlag1 } from "react-icons/ci";
 import {
+  FaCalendar,
   FaCheck,
   FaCheckCircle,
   FaDiscord,
@@ -38,6 +40,7 @@ import {
 import {
   IoArrowUpCircleOutline,
   IoCloudDownloadOutline,
+  IoFootsteps,
   IoHomeOutline,
   IoSettingsSharp,
   IoShareSocial,
@@ -67,16 +70,19 @@ import {
   MdUploadFile,
 } from "react-icons/md";
 import { PiOfficeChairFill } from "react-icons/pi";
-import { RiHashtag } from "react-icons/ri";
+import { RiDeleteBackLine, RiHashtag } from "react-icons/ri";
 import { SlOptions } from "react-icons/sl";
-import { TbNetwork } from "react-icons/tb";
+import { TbNetwork, TbRobot } from "react-icons/tb";
 import { VscGraph } from "react-icons/vsc";
 
 export const iconList: { [name: string]: IconType } = {
   add: LuPlusCircle,
   addWithoutCircle: IoIosAdd,
+  assistant: TbRobot,
+  back: RiDeleteBackLine,
   brain: LuBrain,
   brainCircuit: LuBrainCircuit,
+  calendar: FaCalendar,
   chair: PiOfficeChairFill,
   chat: BsChatLeftText,
   check: FaCheck,
@@ -85,6 +91,7 @@ export const iconList: { [name: string]: IconType } = {
   chevronLeft: LuChevronLeft,
   chevronRight: LuChevronRight,
   close: IoMdClose,
+  coin: BiCoin,
   copy: LuCopy,
   custom: MdDashboardCustomize,
   delete: MdDeleteOutline,
@@ -123,6 +130,7 @@ export const iconList: { [name: string]: IconType } = {
   share: IoShareSocial,
   software: CgSoftwareDownload,
   star: FaRegStar,
+  step: IoFootsteps,
   sun: FaSun,
   thumbsDown: FaRegThumbsDown,
   thumbsUp: FaRegThumbsUp,

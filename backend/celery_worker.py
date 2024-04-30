@@ -1,7 +1,7 @@
 import asyncio
 import io
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 from celery.schedules import crontab
 from celery_config import celery
@@ -20,6 +20,7 @@ from modules.onboarding.service.onboarding_service import OnboardingService
 from packages.files.crawl.crawler import CrawlWebsite
 from packages.files.parsers.github import process_github
 from packages.files.processors import filter_file
+from packages.utils.telemetry import maybe_send_telemetry
 
 logger = get_logger(__name__)
 
@@ -182,6 +183,11 @@ def process_integration_brain_sync_user_brain(brain_id, user_id):
 
 
 @celery.task
+def ping_telemetry():
+    maybe_send_telemetry("ping", {"ping": "pong"})
+
+
+@celery.task
 def process_integration_brain_sync():
     integration = IntegrationBrain()
     integrations = integration.get_integration_brain_by_type_integration("notion")
@@ -191,15 +197,17 @@ def process_integration_brain_sync():
     # only call process_integration_brain_sync_user_brain if more than 1 day has passed since the last sync
     if not integrations:
         return
-    for integration in integrations:
-        print(f"last_synced: {integration.last_synced}")  # Add this line
-        last_synced = datetime.strptime(
-            integration.last_synced, "%Y-%m-%dT%H:%M:%S.%f%z"
-        )
-        if last_synced < time - timedelta(hours=12):
-            process_integration_brain_sync_user_brain.delay(
-                brain_id=integration.brain_id, user_id=integration.user_id
-            )
+    # TODO fix this
+    # for integration in integrations:
+    #     print(f"last_synced: {integration.last_synced}")
+    #     print(f"Integration Name: {integration.name}")
+    #     last_synced = datetime.strptime(
+    #         integration.last_synced, "%Y-%m-%dT%H:%M:%S.%f%z"
+    #     )
+    #     if last_synced < time - timedelta(hours=12) and integration.name == "notion":
+    #         process_integration_brain_sync_user_brain.delay(
+    #             brain_id=integration.brain_id, user_id=integration.user_id
+    #         )
 
 
 celery.conf.beat_schedule = {
@@ -210,5 +218,9 @@ celery.conf.beat_schedule = {
     "process_integration_brain_sync": {
         "task": f"{__name__}.process_integration_brain_sync",
         "schedule": crontab(minute="*/5", hour="*"),
+    },
+    "ping_telemetry": {
+        "task": f"{__name__}.ping_telemetry",
+        "schedule": crontab(minute="*/30", hour="*"),
     },
 }

@@ -1,12 +1,17 @@
+import React from "react";
+
 import { Icon } from "@/lib/components/ui/Icon/Icon";
 
 import styles from "./Stepper.module.scss";
 
-import { useBrainCreationSteps } from "../../hooks/useBrainCreationSteps";
+import { StepValue } from "../../types/types";
 
-export const Stepper = (): JSX.Element => {
-  const { currentStep, steps } = useBrainCreationSteps();
+interface StepperProps {
+  currentStep: StepValue;
+  steps: { value: string; label: string }[];
+}
 
+export const Stepper = ({ currentStep, steps }: StepperProps): JSX.Element => {
   const currentStepIndex = steps.findIndex(
     (step) => step.value === currentStep
   );
@@ -14,7 +19,7 @@ export const Stepper = (): JSX.Element => {
   return (
     <div className={styles.stepper_wrapper}>
       {steps.map((step, index) => (
-        <>
+        <React.Fragment key={step.value}>
           <div
             className={`${styles.step} ${
               index === currentStepIndex
@@ -51,7 +56,7 @@ export const Stepper = (): JSX.Element => {
               `}
             ></div>
           )}
-        </>
+        </React.Fragment>
       ))}
     </div>
   );

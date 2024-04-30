@@ -6,7 +6,6 @@ from celery_worker import process_file_and_notify
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from logger import get_logger
 from middlewares.auth import AuthBearer, get_current_user
-from models import UserUsage
 from modules.brain.entity.brain_entity import RoleEnum
 from modules.brain.service.brain_authorization_service import (
     validate_brain_authorization,
@@ -20,9 +19,10 @@ from modules.notification.dto.inputs import (
 from modules.notification.entity.notification import NotificationsStatusEnum
 from modules.notification.service.notification_service import NotificationService
 from modules.user.entity.user_identity import UserIdentity
+from modules.user.service.user_usage import UserUsage
 from packages.files.file import convert_bytes, get_file_size
-from packages.utils.telemetry import send_telemetry
-from repository.files.upload_file import upload_file_storage
+from packages.utils.telemetry import maybe_send_telemetry
+from modules.upload.service.upload_file import upload_file_storage
 
 logger = get_logger(__name__)
 upload_router = APIRouter()
@@ -47,7 +47,6 @@ async def upload_file(
         brain_id, current_user.id, [RoleEnum.Editor, RoleEnum.Owner]
     )
     uploadFile.file.seek(0)
-    logger.info(f"Uploading file {uploadFile.filename} to brain {brain_id}")
     user_daily_usage = UserUsage(
         id=current_user.id,
         email=current_user.email,
@@ -56,7 +55,7 @@ async def upload_file(
     user_settings = user_daily_usage.get_user_settings()
 
     remaining_free_space = user_settings.get("max_brain_size", 1000000000)
-    send_telemetry("upload_file", {"file_name": uploadFile.filename})
+    maybe_send_telemetry("upload_file", {"file_name": uploadFile.filename})
     file_size = get_file_size(uploadFile)
     if remaining_free_space - file_size < 0:
         message = f"Brain will exceed maximum capacity. Maximum file allowed is : {convert_bytes(remaining_free_space)}"
@@ -72,13 +71,11 @@ async def upload_file(
         )
 
     file_content = await uploadFile.read()
-    logger.info(f"File {uploadFile.filename} read successfully")
-    logger.info(f"Content length: {len(file_content)}")
+
     filename_with_brain_id = str(brain_id) + "/" + str(uploadFile.filename)
 
     try:
         file_in_storage = upload_file_storage(file_content, filename_with_brain_id)
-        logger.info(f"File {file_in_storage} uploaded successfully")
 
     except Exception as e:
         print(e)
@@ -113,7 +110,6 @@ async def upload_file(
     )
 
     added_knowledge = knowledge_service.add_knowledge(knowledge_to_add)
-    logger.info(f"Knowledge {added_knowledge} added successfully")
 
     process_file_and_notify.delay(
         file_name=filename_with_brain_id,

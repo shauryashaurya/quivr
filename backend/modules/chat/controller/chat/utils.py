@@ -3,10 +3,10 @@ from uuid import UUID
 
 from fastapi import HTTPException
 from logger import get_logger
-from models import UserUsage
-from models.databases.entity import LLMModels
+from models.databases.llm_models import LLMModels
 from modules.brain.service.brain_service import BrainService
 from modules.chat.service.chat_service import ChatService
+from modules.user.service.user_usage import UserUsage
 
 logger = get_logger(__name__)
 brain_service = BrainService()
@@ -98,7 +98,7 @@ def update_user_usage(usage: UserUsage, user_settings, cost: int = 100):
     if int(montly_usage + cost) > int(monthly_chat_credit):
         raise HTTPException(
             status_code=429,  # pyright: ignore reportPrivateUsage=none
-            detail=f"You have reached your monthly chat limit of {monthly_chat_credit} requests per months. Please upgrade your plan to increase your daily chat limit.",
+            detail=f"You have reached your monthly chat limit of {monthly_chat_credit} requests per months. Please upgrade your plan to increase your monthly chat limit.",
         )
     else:
         usage.handle_increment_user_request_count(date, cost)
