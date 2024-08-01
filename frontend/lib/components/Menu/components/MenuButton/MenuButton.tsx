@@ -1,7 +1,7 @@
 import { capitalCase } from "change-case";
 import { useState } from "react";
 
-import Icon from "@/lib/components/ui/Icon/Icon";
+import { Icon } from "@/lib/components/ui/Icon/Icon";
 import { iconList } from "@/lib/helpers/iconList";
 
 import styles from "./MenuButton.module.scss";
@@ -13,6 +13,7 @@ export interface ButtonProps {
   type: "add" | "open";
   isSelected?: boolean;
   color: "gold" | "primary";
+  parentHovered?: boolean;
 }
 
 export const MenuButton = (props: ButtonProps): JSX.Element => {
@@ -37,7 +38,7 @@ export const MenuButton = (props: ButtonProps): JSX.Element => {
           ${
             props.color === "gold"
               ? styles.gold
-              : isHovered
+              : isHovered || props.parentHovered
               ? styles.primary
               : ""
           }`}

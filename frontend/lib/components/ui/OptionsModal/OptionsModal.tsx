@@ -41,7 +41,11 @@ export const OptionsModal = ({ options }: OptionsModalProps): JSX.Element => {
             option.disabled ? styles.disabled : ""
           }`}
           key={index}
-          onClick={option.onClick}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            option.onClick();
+          }}
           onMouseEnter={() => handleMouseEnter(index)}
           onMouseLeave={() => handleMouseLeave(index)}
         >

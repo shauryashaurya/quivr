@@ -14,6 +14,7 @@ services:
         - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
         - NEXT_PUBLIC_CMS_URL=${NEXT_PUBLIC_CMS_URL}
         - NEXT_PUBLIC_FRONTEND_URL=${NEXT_PUBLIC_FRONTEND_URL}
+        - NEXT_PUBLIC_AUTH_MODES=${NEXT_PUBLIC_AUTH_MODES}
     container_name: web
     depends_on:
       - backend-core
@@ -36,18 +37,32 @@ services:
       test: [ "CMD", "curl", "http://localhost:5050/healthz" ]
     command:
       - "uvicorn"
-      - "main:app"
+      - "quivr_api.main:app"
       - "--host"
       - "0.0.0.0"
       - "--port"
       - "5050"
-      - "--workers"
-      - "6"
     restart: always
     volumes:
       - ./backend/:/code/
     ports:
       - 5050:5050
+
+  notifier:
+    pull_policy: never
+    image: backend-base:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    container_name: notifier
+    command:
+      - "python"
+      - "/code/api/quivr_api/celery_monitor.py"
+    restart: always
+    depends_on:
+      - redis
+      - worker
 
   redis:
     image: redis:latest@sha256:a7cee7c8178ff9b5297cb109e6240f5072cdaaafd775ce6b586c3c704b06458e
@@ -67,7 +82,7 @@ services:
     container_name: worker
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: celery -A celery_worker worker -l info
+    command: celery -A quivr_api.celery_worker worker -l info
     restart: always
     depends_on:
       - redis
@@ -83,7 +98,7 @@ services:
     container_name: beat
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: celery -A celery_worker beat -l info
+    command: celery -A quivr_api.celery_worker beat -l info
     restart: always
     depends_on:
       - redis
@@ -99,7 +114,7 @@ services:
     container_name: flower
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: celery -A celery_worker flower -l info --port=5555
+    command: celery -A quivr_api.celery_worker flower -l info --port=5555
     restart: always
     depends_on:
       - redis

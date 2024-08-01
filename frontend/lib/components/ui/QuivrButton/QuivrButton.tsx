@@ -7,6 +7,7 @@ import styles from "./QuivrButton.module.scss";
 
 import { Icon } from "../Icon/Icon";
 import { LoaderIcon } from "../LoaderIcon/LoaderIcon";
+import Tooltip from "../Tooltip/Tooltip";
 
 export const QuivrButton = ({
   onClick,
@@ -16,41 +17,68 @@ export const QuivrButton = ({
   iconName,
   disabled,
   hidden,
+  important,
+  small,
+  tooltip,
 }: ButtonType): JSX.Element => {
   const [hovered, setHovered] = useState<boolean>(false);
   const { isDarkMode } = useUserSettingsContext();
 
-  return (
+  const handleMouseEnter = () => setHovered(true);
+  const handleMouseLeave = () => setHovered(false);
+
+  const handleClick = () => {
+    if (!disabled) {
+      void onClick?.();
+    }
+  };
+
+  const useIconColor = () => {
+    if ((hovered && !disabled) || (important && !disabled)) {
+      return "white";
+    }
+    if (disabled) {
+      return "grey";
+    }
+
+    return color;
+  };
+
+  const iconColor = useIconColor();
+
+  const buttonClasses = `${styles.button_wrapper} ${styles[color]} ${
+    isDarkMode ? styles.dark : ""
+  } ${hidden ? styles.hidden : ""} ${important ? styles.important : ""} ${
+    disabled ? styles.disabled : ""
+  } ${small ? styles.small : ""}`;
+
+  const ButtonContent = (
     <div
-      className={`
-      ${styles.button_wrapper} 
-      ${styles[color]} 
-      ${disabled ? styles.disabled : ""}
-      ${isDarkMode ? styles.dark : ""}
-      ${hidden ? styles.hidden : ""}
-      `}
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      onClick={() => onClick?.()}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={buttonClasses}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className={styles.icon_label}>
         {!isLoading ? (
           <Icon
             name={iconName}
-            size="normal"
-            color={hovered ? "white" : disabled ? "grey" : color}
+            size={small ? "small" : "normal"}
+            color={iconColor}
             handleHover={false}
           />
         ) : (
-          <LoaderIcon
-            color={hovered ? "white" : disabled ? "grey" : color}
-            size="small"
-          />
+          <LoaderIcon color={iconColor} size={small ? "small" : "normal"} />
         )}
         <span className={styles.label}>{label}</span>
       </div>
     </div>
+  );
+
+  return disabled ? (
+    <Tooltip tooltip={tooltip}>{ButtonContent}</Tooltip>
+  ) : (
+    ButtonContent
   );
 };
 

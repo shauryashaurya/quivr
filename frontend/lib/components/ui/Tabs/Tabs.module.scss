@@ -1,6 +1,7 @@
-@use "@/styles/Radius.module.scss";
-@use "@/styles/ScreenSizes.module.scss";
-@use "@/styles/Spacings.module.scss";
+@use "styles/Radius.module.scss";
+@use "styles/ScreenSizes.module.scss";
+@use "styles/Spacings.module.scss";
+@use "styles/Typography.module.scss";
 
 .tabs_container {
   display: flex;
@@ -11,7 +12,7 @@
     align-items: center;
     justify-content: center;
     flex: 1;
-    border-bottom: 2px solid var(--border-0);
+    border-bottom: 1px solid var(--border-2);
     padding-block: Spacings.$spacing03;
     cursor: pointer;
     box-sizing: border-box;
@@ -35,6 +36,25 @@
     @media (max-width: ScreenSizes.$small) {
       .label {
         display: none;
+      }
+    }
+
+    .label_wrapper {
+      display: flex;
+      position: relative;
+      gap: Spacings.$spacing02;
+      font-size: Typography.$small;
+
+      .label_badge {
+        border-radius: Radius.$circle;
+        width: 16px;
+        height: 16px;
+        color: var(--white-0);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--primary-0);
+        font-size: Typography.$very-tiny;
       }
     }
   }

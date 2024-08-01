@@ -1,11 +1,12 @@
-@use "@/styles/Radius.module.scss";
-@use "@/styles/Spacings.module.scss";
-@use "@/styles/Typography.module.scss";
+@use "styles/Radius.module.scss";
+@use "styles/Spacings.module.scss";
+@use "styles/Typography.module.scss";
 
 .stepper_wrapper {
   display: flex;
   width: 100%;
   justify-content: space-between;
+  overflow: visible;
 
   .step {
     display: flex;
@@ -14,8 +15,8 @@
     position: relative;
 
     .circle {
-      width: 2.5rem;
-      height: 2.5rem;
+      width: 1.75rem;
+      height: 1.75rem;
       background-color: var(--primary-0);
       border-radius: Radius.$circle;
       display: flex;
@@ -29,6 +30,20 @@
         display: flex;
         justify-content: center;
         align-items: center;
+      }
+    }
+
+    .step_info {
+      margin-top: Spacings.$spacing03;
+      display: flex;
+      flex-direction: column;
+      font-size: Typography.$tiny;
+      width: 1.75rem;
+      align-items: center;
+
+      .step_index {
+        white-space: nowrap;
+        color: var(--text-1);
       }
     }
 
@@ -75,16 +90,15 @@
       }
     }
 
-    .step_info {
-      margin-top: Spacings.$spacing03;
-      display: flex;
-      flex-direction: column;
-      font-size: Typography.$tiny;
-      width: 2.5rem;
+    &:first-child {
+      .step_info {
+        align-items: start;
+      }
+    }
 
-      .step_index {
-        white-space: nowrap;
-        color: var(--text-1);
+    &:last-child {
+      .step_info {
+        align-items: end;
       }
     }
   }
@@ -95,7 +109,7 @@
     border-radius: Radius.$big;
     background-color: var(--primary-1);
     margin: 0 8px;
-    margin-top: Spacings.$spacing05;
+    margin-top: Spacings.$spacing04;
 
     &.done {
       background-color: var(--success);

@@ -8,9 +8,16 @@ import styles from "./Tooltip.module.scss";
 interface TooltipProps {
   children?: ReactNode;
   tooltip?: ReactNode;
+  small?: boolean;
+  type?: "default" | "dangerous" | "success";
 }
 
-const Tooltip = ({ children, tooltip }: TooltipProps): JSX.Element => {
+const Tooltip = ({
+  children,
+  tooltip,
+  small,
+  type,
+}: TooltipProps): JSX.Element => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,7 +40,9 @@ const Tooltip = ({ children, tooltip }: TooltipProps): JSX.Element => {
                     opacity: 0,
                     transition: { ease: "easeIn", duration: 0.1 },
                   }}
-                  className={styles.tooltip_content_wrapper}
+                  className={`${styles.tooltip_content_wrapper} ${
+                    small ? styles.small : ""
+                  } ${styles[type ?? "default"]}`}
                 >
                   {tooltip}
                 </motion.div>

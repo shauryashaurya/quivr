@@ -29,7 +29,14 @@ https://github.com/quivrhq/quivr/assets/19614572/a6463b73-76c7-4bc0-978d-70562dc
 
 ## Getting Started 🚀
 
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+You can deploy Quivr to Porter Cloud with one-click:
+
+<a href="https://cloud.porter.run/addons/new?addon_name=quivr" target="_blank">
+  <img src="https://mintlify.s3-us-west-1.amazonaws.com/porter/images/deploying-applications/deploy-to-porter.svg" alt="Deploy to Porter" style="width: 150px;">
+</a>
+
+
+If you would like to deploy locally, follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
 You can find everything on the [documentation](https://docs.quivr.app/).
 
@@ -75,7 +82,6 @@ You can find the installation video [here](https://www.youtube.com/watch?v=cXBa6
 
   You just need to update the `OPENAI_API_KEY` variable in the `.env` file. You can get your API key [here](https://platform.openai.com/api-keys). You need to create an account first. And put your credit card information. Don't worry, you won't be charged unless you use the API. You can find more information about the pricing [here](https://openai.com/pricing/).
 
-  > Don't want to use OpenAI and want to use Ollama instead for a completely private experience? You can find the instructions [here](https://docs.quivr.app/developers/contribution/llm/ollama).
 
 - **Step 4**: Launch the project
 

@@ -4,7 +4,7 @@ import { UUID } from "crypto";
 
 import { BrainUsers } from "@/app/studio/[brainId]/BrainManagementTabs/components/PeopleTab/BrainUsers/BrainUsers";
 import { UserToInvite } from "@/app/studio/[brainId]/BrainManagementTabs/components/PeopleTab/BrainUsers/components/UserToInvite/UserToInvite";
-import QuivrButton from "@/lib/components/ui/QuivrButton/QuivrButton";
+import { QuivrButton } from "@/lib/components/ui/QuivrButton/QuivrButton";
 import { useShareBrain } from "@/lib/hooks/useShareBrain";
 
 import styles from "./PeopleTab.module.scss";
@@ -61,7 +61,7 @@ export const PeopleTab = ({ brainId }: ShareBrainModalProps): JSX.Element => {
           </div>
         </div>
       </form>
-      <div className={styles.section_wrapper}>
+      <div className={`${styles.section_wrapper} ${styles.last}`}>
         <span className={styles.section_title}>Users with access</span>
         <BrainUsers brainId={brainId} />
       </div>
