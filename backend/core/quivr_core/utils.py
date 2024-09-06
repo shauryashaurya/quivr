@@ -4,7 +4,9 @@ from typing import Any, List, Tuple, no_type_check
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.messages.ai import AIMessageChunk
 from langchain_core.prompts import format_document
+
 from quivr_core.models import (
+    ChatLLMMetadata,
     ParsedRAGResponse,
     QuivrKnowledge,
     RAGResponseMetadata,
@@ -31,9 +33,9 @@ def model_supports_function_calling(model_name: str):
         "gpt-3.5-turbo",
         "gpt-4-turbo",
         "gpt-4o",
+        "gpt-4o-mini",
     ]
     return model_name in models_supporting_function_calls
-
 
 def format_history_to_openai_mesages(
     tuple_history: List[Tuple[str, str]], system_message: str, question: str
@@ -92,7 +94,12 @@ def parse_chunk_response(
     # Init with sources
     answer_str = ""
 
-    rolling_msg += raw_chunk["answer"]
+    if "answer" in raw_chunk:
+        answer = raw_chunk["answer"]
+    else:
+        answer = raw_chunk
+
+    rolling_msg += answer
     if supports_func_calling:
         if rolling_msg.tool_calls:
             cited_answer = next(
@@ -105,29 +112,34 @@ def parse_chunk_response(
                     answer_str = gathered_args["answer"]
         return rolling_msg, answer_str
     else:
-        return rolling_msg, raw_chunk["answer"].content
+        return rolling_msg, answer.content
 
 
 @no_type_check
 def parse_response(raw_response: RawRAGResponse, model_name: str) -> ParsedRAGResponse:
-    answer = raw_response["answer"].content
+    answer = ""
     sources = raw_response["docs"] or []
 
-    metadata = {"sources": sources}
+    metadata = RAGResponseMetadata(
+        sources=sources, metadata_model=ChatLLMMetadata(name=model_name)
+    )
 
     if model_supports_function_calling(model_name):
-        if raw_response["answer"].tool_calls:
+        if 'tool_calls' in raw_response["answer"] and raw_response["answer"].tool_calls and "citations" in raw_response["answer"].tool_calls[-1]["args"]:
             citations = raw_response["answer"].tool_calls[-1]["args"]["citations"]
-            metadata["citations"] = citations
+            metadata.citations = citations
             followup_questions = raw_response["answer"].tool_calls[-1]["args"][
                 "followup_questions"
             ]
             if followup_questions:
-                metadata["followup_questions"] = followup_questions
+                metadata.followup_questions = followup_questions
+            answer = raw_response["answer"].tool_calls[-1]["args"]["answer"]
+        else:
+            answer = raw_response["answer"].tool_calls[-1]["args"]["answer"]
+    else:
+        answer = raw_response["answer"].content
 
-    parsed_response = ParsedRAGResponse(
-        answer=answer, metadata=RAGResponseMetadata(**metadata)
-    )
+    parsed_response = ParsedRAGResponse(answer=answer, metadata=metadata)
     return parsed_response
 
 

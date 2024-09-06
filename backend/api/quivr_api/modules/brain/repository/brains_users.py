@@ -1,7 +1,6 @@
 from uuid import UUID
 
 from quivr_api.logger import get_logger
-from quivr_api.models.settings import get_embedding_client, get_supabase_client
 from quivr_api.modules.brain.entity.brain_entity import (
     BrainUser,
     MinimalUserBrainEntity,
@@ -9,6 +8,7 @@ from quivr_api.modules.brain.entity.brain_entity import (
 from quivr_api.modules.brain.repository.interfaces.brains_users_interface import (
     BrainsUsersInterface,
 )
+from quivr_api.modules.dependencies import get_embedding_client, get_supabase_client
 
 logger = get_logger(__name__)
 
@@ -39,7 +39,7 @@ class BrainsUsers(BrainsUsersInterface):
         response = (
             self.db.from_("brains_users")
             .select(
-                "id:brain_id, rights, brains (brain_id, name, status, brain_type, description, meaning, integrations_user (brain_id, integration_id, integrations (id, integration_name, integration_logo_url, max_files)))"
+                "id:brain_id, rights, brains (brain_id, name, status, brain_type, model, description, meaning, snippet_color, snippet_emoji, integrations_user (brain_id, integration_id, integrations (id, integration_name, integration_logo_url, max_files)))"
             )
             .filter("user_id", "eq", user_id)
             .execute()
@@ -60,6 +60,7 @@ class BrainsUsers(BrainsUsersInterface):
             user_brains.append(
                 MinimalUserBrainEntity(
                     id=item["brains"]["brain_id"],
+                    brain_model=item["brains"]["model"],
                     name=item["brains"]["name"],
                     rights=item["rights"],
                     status=item["brains"]["status"],
@@ -71,6 +72,8 @@ class BrainsUsers(BrainsUsersInterface):
                     ),
                     integration_logo_url=str(integration_logo_url),
                     max_files=max_files,
+                    snippet_color=item["brains"]["snippet_color"],
+                    snippet_emoji=item["brains"]["snippet_emoji"],
                 )
             )
             user_brains[-1].rights = item["rights"]

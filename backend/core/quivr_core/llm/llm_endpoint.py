@@ -1,9 +1,16 @@
+import logging
+from urllib.parse import parse_qs, urlparse
+
 from langchain_core.language_models.chat_models import BaseChatModel
 from pydantic.v1 import SecretStr
+from langchain_openai import AzureChatOpenAI, ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 
 from quivr_core.brain.info import LLMInfo
 from quivr_core.config import LLMEndpointConfig
 from quivr_core.utils import model_supports_function_calling
+
+logger = logging.getLogger("quivr_core")
 
 
 class LLMEndpoint:
@@ -20,13 +27,38 @@ class LLMEndpoint:
     @classmethod
     def from_config(cls, config: LLMEndpointConfig = LLMEndpointConfig()):
         try:
-            from langchain_openai import ChatOpenAI
+            
 
-            _llm = ChatOpenAI(
-                model=config.model,
-                api_key=SecretStr(config.llm_api_key) if config.llm_api_key else None,
-                base_url=config.llm_base_url,
-            )
+            if config.model.startswith("azure/"):
+                # Parse the URL
+                parsed_url = urlparse(config.llm_base_url)
+                deployment = parsed_url.path.split("/")[3]  # type: ignore
+                api_version = parse_qs(parsed_url.query).get("api-version", [None])[0]  # type: ignore
+                azure_endpoint = f"https://{parsed_url.netloc}"  # type: ignore
+                _llm = AzureChatOpenAI(
+                    azure_deployment=deployment,  # type: ignore
+                    api_version=api_version,
+                    api_key=SecretStr(config.llm_api_key)
+                    if config.llm_api_key
+                    else None,
+                    azure_endpoint=azure_endpoint,
+                )
+            elif config.model.startswith("claude"):
+                _llm = ChatAnthropic(
+                    model_name=config.model,
+                    api_key=SecretStr(config.llm_api_key)
+                    if config.llm_api_key
+                    else None,
+                    base_url=config.llm_base_url,
+                )
+            else:
+                _llm = ChatOpenAI(
+                    model=config.model,
+                    api_key=SecretStr(config.llm_api_key)
+                    if config.llm_api_key
+                    else None,
+                    base_url=config.llm_base_url,
+                )
             return cls(llm=_llm, llm_config=config)
 
         except ImportError as e:

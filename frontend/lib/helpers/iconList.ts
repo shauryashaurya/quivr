@@ -2,7 +2,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { BiCoin } from "react-icons/bi";
 import {
   BsArrowRightShort,
-  BsChatLeftText,
   BsFiletypeCsv,
   BsFiletypeDocx,
   BsFiletypeHtml,
@@ -47,8 +46,8 @@ import { GoLightBulb } from "react-icons/go";
 import { HiBuildingOffice } from "react-icons/hi2";
 import {
   IoIosAdd,
-  IoIosHelpCircleOutline,
   IoIosRadio,
+  IoIosSend,
   IoMdClose,
   IoMdLogOut,
   IoMdSettings,
@@ -57,8 +56,10 @@ import {
 import {
   IoArrowUpCircleOutline,
   IoBookOutline,
+  IoChatbubbleEllipsesOutline,
   IoCloudDownloadOutline,
   IoFootsteps,
+  IoHelp,
   IoHomeOutline,
   IoShareSocial,
   IoWarningOutline,
@@ -87,9 +88,11 @@ import {
   MdLink,
   MdMarkEmailRead,
   MdMarkEmailUnread,
+  MdOutlineEmojiEmotions,
   MdOutlineLightMode,
   MdOutlineMail,
   MdOutlineModeEditOutline,
+  MdOutlinePalette,
   MdOutlineVpnKey,
   MdUnfoldLess,
   MdUnfoldMore,
@@ -101,7 +104,7 @@ import {
   RiHashtag,
   RiNotification2Line,
 } from "react-icons/ri";
-import { SlOptions } from "react-icons/sl";
+import { SlOptionsVertical } from "react-icons/sl";
 import { TbNetwork, TbRobot } from "react-icons/tb";
 import { VscGraph } from "react-icons/vsc";
 
@@ -115,7 +118,7 @@ export const iconList: { [name: string]: IconType } = {
   brainCircuit: LuBrainCircuit,
   calendar: FaCalendar,
   chair: PiOfficeChairFill,
-  chat: BsChatLeftText,
+  chat: IoChatbubbleEllipsesOutline,
   check: FaCheck,
   checkCircle: FaCheckCircle,
   chevronDown: LuChevronDown,
@@ -123,6 +126,7 @@ export const iconList: { [name: string]: IconType } = {
   chevronRight: LuChevronRight,
   close: IoMdClose,
   coin: BiCoin,
+  color: MdOutlinePalette,
   copy: LuCopy,
   custom: MdDashboardCustomize,
   delete: MdDeleteOutline,
@@ -132,6 +136,7 @@ export const iconList: { [name: string]: IconType } = {
   download: IoCloudDownloadOutline,
   edit: MdOutlineModeEditOutline,
   email: MdOutlineMail,
+  emoji: MdOutlineEmojiEmotions,
   epub: FaFile,
   eureka: GoLightBulb,
   externLink: LuExternalLink,
@@ -146,12 +151,13 @@ export const iconList: { [name: string]: IconType } = {
   goal: LuGoal,
   graph: VscGraph,
   hashtag: RiHashtag,
-  help: IoIosHelpCircleOutline,
+  help: IoHelp,
   hide: LuArrowLeftFromLine,
   history: MdHistory,
   home: IoHomeOutline,
   html: BsFiletypeHtml,
   info: FaInfo,
+  invite: IoIosSend,
   ipynb: BsFiletypePy,
   key: MdOutlineVpnKey,
   link: MdLink,
@@ -169,7 +175,7 @@ export const iconList: { [name: string]: IconType } = {
   notifications: RiNotification2Line,
   office: HiBuildingOffice,
   odt: BsFiletypeDocx,
-  options: SlOptions,
+  options: SlOptionsVertical,
   paragraph: BsTextParagraph,
   pptx: BsFiletypePptx,
   prompt: FaRegKeyboard,

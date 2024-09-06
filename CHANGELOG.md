@@ -1,5 +1,177 @@
 # Changelog
 
+## 0.0.306 (2024-09-05)
+
+## What's Changed
+* feat(readme): trigger deploy by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3159
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.305...v0.0.306
+
+## 0.0.305 (2024-09-05)
+
+## What's Changed
+* chore: update next.config.js with PostHog domains by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3155
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.304...v0.0.305
+
+## 0.0.304 (2024-09-05)
+
+## What's Changed
+* feat: update Azure login button text by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3152
+* fix: url knowledge multiple brain by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/3145
+* chore: update Dockerfile with PostHog environment variables by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3154
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.303...v0.0.304
+
+## 0.0.303 (2024-09-04)
+
+## What's Changed
+* fix(chat): order of chat history was reversed by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3148
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.302...v0.0.303
+
+## 0.0.302 (2024-09-04)
+
+## What's Changed
+* feat(anthropic): add llm by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3146
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.301...v0.0.302
+
+## 0.0.301 (2024-09-03)
+
+## What's Changed
+* feat(smtp): not enforcing tls by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3067
+* feat: Update send_email.py to conditionally login with SMTP credentials by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3069
+* feat: Add NEXT_PUBLIC_PROJECT_NAME environment variable by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3070
+* feat: Add Azure login support by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3071
+* fix(frontend): only owner can access knowledge and edit brain snippet by @Zewed in https://github.com/QuivrHQ/quivr/pull/3073
+* fix(frontend): brain knowledge visibility by @Zewed in https://github.com/QuivrHQ/quivr/pull/3074
+* fix(frontend): revamp of settings  by @Zewed in https://github.com/QuivrHQ/quivr/pull/3081
+* fix: Update README.md by @Zewed in https://github.com/QuivrHQ/quivr/pull/3084
+* fix(frontend): send invitation clearer by @Zewed in https://github.com/QuivrHQ/quivr/pull/3090
+* fix(frontend): spacing chats by @Zewed in https://github.com/QuivrHQ/quivr/pull/3091
+* fix(frontend): use click delay by @Zewed in https://github.com/QuivrHQ/quivr/pull/3092
+* fix(frontend): back buttons by @Zewed in https://github.com/QuivrHQ/quivr/pull/3094
+* fix(frontend): change hover delay for tooltips by @Zewed in https://github.com/QuivrHQ/quivr/pull/3095
+* fix(frontend): rename search by thread by @Zewed in https://github.com/QuivrHQ/quivr/pull/3099
+* feat(frontend): revamp of some basics components by @Zewed in https://github.com/QuivrHQ/quivr/pull/3105
+* feat(frontend): interaction with brain items by @Zewed in https://github.com/QuivrHQ/quivr/pull/3106
+* fix(frontend): remove intercom on thread page of mobile by @Zewed in https://github.com/QuivrHQ/quivr/pull/3108
+* feat:  quivr core 0.1 by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2970
+* fix: Blank scrollbar on certain browsers by @adityanandanx in https://github.com/QuivrHQ/quivr/pull/3118
+* chore(docs): moved repository by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3123
+* fix: knowledge user by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/3124
+* chore(readme): increase size icon by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3125
+* chore: remove unused syncNotion function in ConnectionCards.tsx by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3129
+* chore: update compatibility by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3136
+* ci(raise): only on tags by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3140
+* feat: using langgraph in our RAG pipeline by @jacopo-chevallard in https://github.com/QuivrHQ/quivr/pull/3130
+* fix: knowledge multiple brains by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/3142
+* fix: knowledge multiple brains - update knowledge rollback by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/3143
+
+## New Contributors
+* @jacopo-chevallard made their first contribution in https://github.com/QuivrHQ/quivr/pull/3130
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.300...v0.0.301
+
+## 0.0.300 (2024-08-22)
+
+## What's Changed
+* feat(smtp&share): implemented smtp support and fixed share brain by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3049
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.299...v0.0.300
+
+## 0.0.299 (2024-08-22)
+
+## What's Changed
+* fix: Update Supabase configuration by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3014
+* Delete Porter Application theodo-backend by @porter-deployment-app in https://github.com/QuivrHQ/quivr/pull/3022
+* Delete Porter Application theodo-frontend by @porter-deployment-app in https://github.com/QuivrHQ/quivr/pull/3023
+* feat(frontend): emoji selector component by @Zewed in https://github.com/QuivrHQ/quivr/pull/3024
+* feat(frontend): show or hide tokens relative stuff by @Zewed in https://github.com/QuivrHQ/quivr/pull/3017
+* feat(frontend): color picker by @Zewed in https://github.com/QuivrHQ/quivr/pull/3027
+* fix(frontend): small stuff on mobile by @Zewed in https://github.com/QuivrHQ/quivr/pull/3039
+* feat(frontend): handle LaTeX in message thread by @Zewed in https://github.com/QuivrHQ/quivr/pull/3040
+* fix(frontend): fix docker build frontend new env by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3041
+* feat(frontend): brain snippet selector by @Zewed in https://github.com/QuivrHQ/quivr/pull/3038
+* feat: Add environment variable for showing tokens in frontend by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3048
+* fix(frontend): color icon for blocks by @Zewed in https://github.com/QuivrHQ/quivr/pull/3042
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.298...v0.0.299
+
+## 0.0.298 (2024-08-16)
+
+## What's Changed
+* feat(azure): quivr compatible with it by @StanGirard in https://github.com/QuivrHQ/quivr/pull/3005
+* feat(frontend): helpbox by @Zewed in https://github.com/QuivrHQ/quivr/pull/3007
+* feat(frontend): order models and brain by name by @Zewed in https://github.com/QuivrHQ/quivr/pull/3009
+* fix(frontend): help window by @Zewed in https://github.com/QuivrHQ/quivr/pull/3013
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.297...v0.0.298
+
+## 0.0.297 (2024-08-14)
+
+## What's Changed
+* fix(frontend): remove onboarding modal by @Zewed in https://github.com/QuivrHQ/quivr/pull/3001
+* fix(frontend): max height for user message by @Zewed in https://github.com/QuivrHQ/quivr/pull/3000
+* fix: commit on try sqlalchemy by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/3004
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.296...v0.0.297
+
+## 0.0.296 (2024-08-13)
+
+## What's Changed
+* fix(frontend): color of copy icon for code blocks by @Zewed in https://github.com/QuivrHQ/quivr/pull/2993
+* fix(frontend): search bar height by @Zewed in https://github.com/QuivrHQ/quivr/pull/2998
+* fix: autocommit isolation level by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/2999
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.295...v0.0.296
+
+## 0.0.295 (2024-08-12)
+
+## What's Changed
+* chore: Update frontend README.md with yarn dev command (#2931) by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2958
+* feat: Add brain_id and brain_name to ChatLLMMetadata model by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2968
+* feat(frontend): talk with models and handle code markdown by @Zewed in https://github.com/QuivrHQ/quivr/pull/2980
+* fix(frontend): talk with models by @Zewed in https://github.com/QuivrHQ/quivr/pull/2981
+* feat(models): all models by default by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2983
+* chore(env): add deactivate stripe env variable by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2986
+* fix(frontend): handling unimported languages in Prism js by @Zewed in https://github.com/QuivrHQ/quivr/pull/2990
+* fix(frontend): logo design of models by @Zewed in https://github.com/QuivrHQ/quivr/pull/2992
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.294...v0.0.295
+
+## 0.0.294 (2024-08-07)
+
+## What's Changed
+* Delete Porter Application quivr-com by @porter-deployment-app in https://github.com/QuivrHQ/quivr/pull/2927
+* Delete Porter Application quivr-com-backend by @porter-deployment-app in https://github.com/QuivrHQ/quivr/pull/2928
+* feat: quivr core tox test + parsers by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/2929
+* feat(frontend): handle no brain selection by @Zewed in https://github.com/QuivrHQ/quivr/pull/2932
+* fix: processor quivr version by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/2934
+* fix: quivr core fix tests by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/2935
+* chore(main): release core 0.0.13 by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2930
+* feat: Add GitHub sync functionality to sync router by @chloedia in https://github.com/QuivrHQ/quivr/pull/2871
+* refactor: Remove syncGitHub function from useSync.ts by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2942
+* feat: add chat with models by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2933
+* ci: precommit in CI by @AmineDiro in https://github.com/QuivrHQ/quivr/pull/2946
+* feat: Add get_model method to ModelRepository by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2949
+* feat: Add user email to StripePricingOrManageButton and UpgradeToPlusButton components by @StanGirard in https://github.com/QuivrHQ/quivr/pull/2951
+
+
+**Full Changelog**: https://github.com/QuivrHQ/quivr/compare/v0.0.293...v0.0.294
+
 ## 0.0.293 (2024-07-30)
 
 ## What's Changed

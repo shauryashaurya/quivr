@@ -1,8 +1,9 @@
 from typing import Annotated, List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
+
 from quivr_api.logger import get_logger
 from quivr_api.middlewares.auth import AuthBearer, get_current_user
 from quivr_api.modules.brain.entity.brain_entity import RoleEnum
@@ -10,6 +11,7 @@ from quivr_api.modules.brain.service.brain_authorization_service import (
     validate_brain_authorization,
 )
 from quivr_api.modules.brain.service.brain_service import BrainService
+from quivr_api.modules.chat.controller.chat.utils import check_and_update_user_usage
 from quivr_api.modules.chat.dto.chats import ChatItem, ChatQuestion
 from quivr_api.modules.chat.dto.inputs import (
     ChatMessageProperties,
@@ -19,23 +21,31 @@ from quivr_api.modules.chat.dto.inputs import (
 )
 from quivr_api.modules.chat.entity.chat import Chat
 from quivr_api.modules.chat.service.chat_service import ChatService
+from quivr_api.modules.chat_llm_service.chat_llm_service import ChatLLMService
 from quivr_api.modules.dependencies import get_service
-from quivr_api.modules.knowledge.repository.knowledges import KnowledgeRepository
+from quivr_api.modules.knowledge.service.knowledge_service import KnowledgeService
+from quivr_api.modules.models.service.model_service import ModelService
 from quivr_api.modules.prompt.service.prompt_service import PromptService
 from quivr_api.modules.rag_service import RAGService
 from quivr_api.modules.user.entity.user_identity import UserIdentity
-from quivr_api.packages.utils.telemetry import maybe_send_telemetry
+from quivr_api.modules.vector.service.vector_service import VectorService
+from quivr_api.utils.telemetry import maybe_send_telemetry
+from quivr_api.utils.uuid_generator import generate_uuid_from_string
 
 logger = get_logger(__name__)
 
 chat_router = APIRouter()
 brain_service = BrainService()
-knowledge_service = KnowledgeRepository()
+KnowledgeServiceDep = Annotated[
+    KnowledgeService, Depends(get_service(KnowledgeService))
+]
 prompt_service = PromptService()
 
 
 ChatServiceDep = Annotated[ChatService, Depends(get_service(ChatService))]
 UserIdentityDep = Annotated[UserIdentity, Depends(get_current_user)]
+ModelServiceDep = Annotated[ModelService, Depends(get_service(ModelService))]
+VectorServiceDep = Annotated[VectorService, Depends(get_service(VectorService, False))]
 
 
 def validate_authorization(user_id, brain_id):
@@ -125,7 +135,7 @@ async def update_chat_message(
     return chat_service.update_chat_message(
         chat_id=chat_id,
         message_id=message_id,
-        chat_message_properties=chat_message_properties.dict(),
+        chat_message_properties=chat_message_properties,
     )
 
 
@@ -161,23 +171,61 @@ async def create_question_handler(
     chat_id: UUID,
     current_user: UserIdentityDep,
     chat_service: ChatServiceDep,
+    knowledge_service: KnowledgeServiceDep,
+    model_service: ModelServiceDep,
+    vector_service: VectorServiceDep,
     brain_id: Annotated[UUID | None, Query()] = None,
 ):
-    # TODO: check logic into middleware
-    validate_authorization(user_id=current_user.id, brain_id=brain_id)
-    try:
-        rag_service = RAGService(
-            current_user,
-            brain_id,
-            chat_id,
-            brain_service,
-            prompt_service,
-            chat_service,
-            knowledge_service,
-        )
-        chat_answer = await rag_service.generate_answer(chat_question.question)
+    models = await model_service.get_models()
 
-        maybe_send_telemetry("question_asked", {"streaming": False}, request)
+    model_to_use = None
+    # Check if the brain_id is a model name hashed to a uuid and then returns the model name
+    # if chat_question.brain_id in [generate_uuid_from_string(model.name) for model in models]:
+    #     mode
+    for model in models:
+        if brain_id == generate_uuid_from_string(model.name):
+            model_to_use = model
+            break
+
+    try:
+        service = None | RAGService | ChatLLMService
+        if not model_to_use:
+            brain = brain_service.get_brain_details(brain_id, current_user.id)  # type: ignore
+            assert brain
+            model = await check_and_update_user_usage(
+                current_user, str(brain.model), model_service
+            )  # type: ignore
+            assert model is not None  # type: ignore
+            assert brain is not None  # type: ignore
+
+            brain.model = model.name
+            validate_authorization(user_id=current_user.id, brain_id=brain_id)
+            service = RAGService(
+                current_user,
+                brain,
+                chat_id,
+                brain_service,
+                prompt_service,
+                chat_service,
+                knowledge_service,
+                vector_service,
+                model_service,
+            )
+        else:
+            await check_and_update_user_usage(
+                current_user, model_to_use.name, model_service
+            )  # type: ignore
+            service = ChatLLMService(
+                current_user,
+                model_to_use.name,
+                chat_id,
+                chat_service,
+                model_service,
+            )  # type: ignore
+        assert service is not None  # type: ignore
+        maybe_send_telemetry("question_asked", {"streaming": True}, request)
+        chat_answer = await service.generate_answer(chat_question.question)
+
         return chat_answer
 
     except AssertionError:
@@ -205,28 +253,65 @@ async def create_stream_question_handler(
     chat_id: UUID,
     chat_service: ChatServiceDep,
     current_user: UserIdentityDep,
+    knowledge_service: KnowledgeServiceDep,
+    model_service: ModelServiceDep,
+    vector_service: VectorServiceDep,
+    background_tasks: BackgroundTasks,
     brain_id: Annotated[UUID | None, Query()] = None,
 ) -> StreamingResponse:
-    validate_authorization(user_id=current_user.id, brain_id=brain_id)
-
     logger.info(
         f"Creating question for chat {chat_id} with brain {brain_id} of type {type(brain_id)}"
     )
 
+    models = await model_service.get_models()
+    # Check if the brain_id is a model name hashed to a uuid and then returns the model name
+    # if chat_question.brain_id in [generate_uuid_from_string(model.name) for model in models]:
+    #     mode
+    model_to_use = None
+    for model in models:
+        if brain_id == generate_uuid_from_string(model.name):
+            model_to_use = model
+            break
     try:
-        rag_service = RAGService(
-            current_user,
-            brain_id,
-            chat_id,
-            brain_service,
-            prompt_service,
-            chat_service,
-            knowledge_service,
+        if model_to_use is None:
+            assert brain_id
+            brain = brain_service.get_brain_details(brain_id, current_user.id)
+            assert brain is not None
+            model = await check_and_update_user_usage(
+                current_user, str(brain.model), model_service
+            )
+            assert model is not None
+            brain.model = model.name
+            validate_authorization(user_id=current_user.id, brain_id=brain_id)
+            service = RAGService(
+                current_user,
+                brain,
+                chat_id,
+                brain_service,
+                prompt_service,
+                chat_service,
+                knowledge_service,
+                vector_service,
+                model_service,
+            )
+        else:
+            await check_and_update_user_usage(
+                current_user, model_to_use.name, model_service
+            )  # type: ignore
+            service = ChatLLMService(
+                current_user,
+                model_to_use.name,
+                chat_id,
+                chat_service,
+                model_service,
+            )  # type: ignore
+
+        background_tasks.add_task(
+            maybe_send_telemetry, "question_asked", {"streaming": True}, request
         )
-        maybe_send_telemetry("question_asked", {"streaming": True}, request)
 
         return StreamingResponse(
-            rag_service.generate_answer_stream(chat_question.question),
+            service.generate_answer_stream(chat_question.question),
             media_type="text/event-stream",
         )
 

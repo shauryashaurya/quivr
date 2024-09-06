@@ -53,8 +53,8 @@ class ChatService(BaseService[ChatRepository]):
         return inserted_chat
 
     def get_follow_up_question(
-        self, brain_id: UUID | None = None, question: str = None
-    ) -> [str]:
+        self, brain_id: UUID | None = None, question: str | None = None
+    ) -> list[str]:
         follow_up = [
             "Summarize the conversation",
             "Explain in more detail",
@@ -87,9 +87,15 @@ class ChatService(BaseService[ChatRepository]):
         enriched_history: List[GetChatHistoryOutput] = []
         if len(history) == 0:
             return enriched_history
-        brain: Brain = await history[0].awaitable_attrs.brain
-        prompt: Prompt = await brain.awaitable_attrs.prompt
         for message in history:
+            brain: Brain | None = (
+                await message.awaitable_attrs.brain if message.brain_id else None
+            )
+            prompt: Prompt | None = None
+            if brain:
+                prompt = (
+                    await brain.awaitable_attrs.prompt if message.prompt_id else None
+                )
             enriched_history.append(
                 # TODO : WHY bother with having ids here ??
                 GetChatHistoryOutput(
