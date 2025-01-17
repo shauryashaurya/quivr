@@ -8,117 +8,185 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/quivrhq/quivr?style=social)](https://github.com/quivrhq/quivr)
 [![Twitter Follow](https://img.shields.io/twitter/follow/StanGirard?style=social)](https://twitter.com/_StanGirard)
 
-Quivr, your second brain, utilizes the power of GenerativeAI to be your personal assistant ! Think of it as Obsidian, but turbocharged with AI capabilities.
-
-[Roadmap here](https://docs.quivr.app/docs/roadmap)
+Quivr, helps you build your second brain, utilizes the power of GenerativeAI to be your personal assistant !
 
 ## Key Features 🎯
 
-- **Fast and Efficient**: Designed with speed and efficiency at its core. Quivr ensures rapid access to your data.
-- **Secure**: Your data, your control. Always.
-- **OS Compatible**: Ubuntu 20 or newer.
-- **File Compatibility**: Text, Markdown, PDF, Powerpoint, Excel, CSV, Word, Audio, Video
-- **Open Source**: Freedom is beautiful, and so is Quivr. Open source and free to use.
-- **Public/Private**: Share your brains with your users via a public link, or keep them private.
-- **Offline Mode**: Quivr works offline, so you can access your data anytime, anywhere.
+- **Opiniated RAG**: We created a RAG that is opinionated, fast and efficient so you can focus on your product
+- **LLMs**: Quivr works with any LLM, you can use it with OpenAI, Anthropic, Mistral, Gemma, etc.
+- **Any File**: Quivr works with any file, you can use it with PDF, TXT, Markdown, etc and even add your own parsers.
+- **Customize your RAG**: Quivr allows you to customize your RAG, add internet search, add tools, etc.
+- **Integrations with Megaparse**: Quivr works with [Megaparse](https://github.com/quivrhq/megaparse), so you can ingest your files with Megaparse and use the RAG with Quivr.
 
-## Demo Highlight 🎥
+>We take care of the RAG so you can focus on your product. Simply install quivr-core and add it to your project. You can now ingest your files and ask questions.*
 
-https://github.com/quivrhq/quivr/assets/19614572/a6463b73-76c7-4bc0-978d-70562dca71f5
+**We will be improving the RAG and adding more features, stay tuned!**
+
+
+This is the core of Quivr, the brain of Quivr.com.
+
+<!-- ## Demo Highlight 🎥
+
+https://github.com/quivrhq/quivr/assets/19614572/a6463b73-76c7-4bc0-978d-70562dca71f5 -->
 
 ## Getting Started 🚀
 
-You can deploy Quivr to Porter Cloud with one-click:
-
-<a href="https://cloud.porter.run/addons/new?addon_name=quivr" target="_blank">
-  <img src="https://mintlify.s3-us-west-1.amazonaws.com/porter/images/deploying-applications/deploy-to-porter.svg" alt="Deploy to Porter" style="width: 150px;">
-</a>
-
-
-If you would like to deploy locally, follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
-
-You can find everything on the [documentation](https://docs.quivr.app/).
+You can find everything on the [documentation](https://core.quivr.com/).
 
 ### Prerequisites 📋
 
 Ensure you have the following installed:
 
-- Docker
-- Docker Compose
+- Python 3.10 or newer
 
-### 60 seconds Installation 💽
+### 30 seconds Installation 💽
 
-You can find the installation video [here](https://www.youtube.com/watch?v=cXBa6dZJN48).
 
-- **Step 0**: Supabase CLI
+- **Step 1**: Install the package
 
-  Follow the instructions [here](https://supabase.com/docs/guides/cli/getting-started) to install the Supabase CLI that is required.
+  
 
   ```bash
-  supabase -v # Check that the installation worked
+  pip install quivr-core # Check that the installation worked
   ```
 
 
-- **Step 1**: Clone the repository:
+- **Step 2**: Create a RAG with 5 lines of code
 
-  ```bash
-  git clone https://github.com/quivrhq/quivr.git && cd quivr
+  ```python
+  import tempfile
+
+  from quivr_core import Brain
+
+  if __name__ == "__main__":
+      with tempfile.NamedTemporaryFile(mode="w", suffix=".txt") as temp_file:
+          temp_file.write("Gold is a liquid of blue-like colour.")
+          temp_file.flush()
+
+          brain = Brain.from_files(
+              name="test_brain",
+              file_paths=[temp_file.name],
+          )
+
+          answer = brain.ask(
+              "what is gold? asnwer in french"
+          )
+          print("answer:", answer)
   ```
+## Configuration
 
-- **Step 2**: Copy the `.env.example` files
+### Workflows
 
-  ```bash
-  cp .env.example .env
-  ```
+#### Basic RAG
 
-- **Step 3**: Update the `.env` files
-
-  ```bash
-  vim .env # or emacs or vscode or nano
-  ```
-
-  Update **OPENAI_API_KEY** in the `.env` file.
-
-  You just need to update the `OPENAI_API_KEY` variable in the `.env` file. You can get your API key [here](https://platform.openai.com/api-keys). You need to create an account first. And put your credit card information. Don't worry, you won't be charged unless you use the API. You can find more information about the pricing [here](https://openai.com/pricing/).
+![](docs/docs/workflows/examples/basic_rag.excalidraw.png)
 
 
-- **Step 4**: Launch the project
+Creating a basic RAG workflow like the one above is simple, here are the steps:
 
-  ```bash
-  cd backend && supabase start
-  ```
-  and then 
-  ```bash
-  cd ../
-  docker compose pull
-  docker compose up
-  ```
 
-  If you have a Mac, go to Docker Desktop > Settings > General and check that the "file sharing implementation" is set to `VirtioFS`.
+1. Add your API Keys to your environment variables
+```python
+import os
+os.environ["OPENAI_API_KEY"] = "myopenai_apikey"
 
-  If you are a developer, you can run the project in development mode with the following command: `docker compose -f docker-compose.dev.yml up --build`
+```
+Quivr supports APIs from Anthropic, OpenAI, and Mistral. It also supports local models using Ollama.
 
-- **Step 5**: Login to the app
+1. Create the YAML file ``basic_rag_workflow.yaml`` and copy the following content in it
+```yaml
+workflow_config:
+  name: "standard RAG"
+  nodes:
+    - name: "START"
+      edges: ["filter_history"]
 
-  You can now sign in to the app with `admin@quivr.app` & `admin`. You can access the app at [http://localhost:3000/login](http://localhost:3000/login).
+    - name: "filter_history"
+      edges: ["rewrite"]
 
-  You can access Quivr backend API at [http://localhost:5050/docs](http://localhost:5050/docs)
+    - name: "rewrite"
+      edges: ["retrieve"]
 
-  You can access supabase at [http://localhost:54323](http://localhost:54323)
+    - name: "retrieve"
+      edges: ["generate_rag"]
 
-## Updating Quivr 🚀
+    - name: "generate_rag" # the name of the last node, from which we want to stream the answer to the user
+      edges: ["END"]
 
-- **Step 1**: Pull the latest changes
+# Maximum number of previous conversation iterations
+# to include in the context of the answer
+max_history: 10
 
-  ```bash
-  git pull
-  ```
+# Reranker configuration
+reranker_config:
+  # The reranker supplier to use
+  supplier: "cohere"
 
-- **Step 2**: Update the migration
+  # The model to use for the reranker for the given supplier
+  model: "rerank-multilingual-v3.0"
 
-  ```bash
-  supabase migration up
-  ```
+  # Number of chunks returned by the reranker
+  top_n: 5
+
+# Configuration for the LLM
+llm_config:
+
+  # maximum number of tokens passed to the LLM to generate the answer
+  max_input_tokens: 4000
+
+  # temperature for the LLM
+  temperature: 0.7
+```
+
+3. Create a Brain with the default configuration
+```python
+from quivr_core import Brain
+
+brain = Brain.from_files(name = "my smart brain",
+                        file_paths = ["./my_first_doc.pdf", "./my_second_doc.txt"],
+                        )
+
+```
+
+4. Launch a Chat
+```python
+brain.print_info()
+
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Prompt
+from quivr_core.config import RetrievalConfig
+
+config_file_name = "./basic_rag_workflow.yaml"
+
+retrieval_config = RetrievalConfig.from_yaml(config_file_name)
+
+console = Console()
+console.print(Panel.fit("Ask your brain !", style="bold magenta"))
+
+while True:
+    # Get user input
+    question = Prompt.ask("[bold cyan]Question[/bold cyan]")
+
+    # Check if user wants to exit
+    if question.lower() == "exit":
+        console.print(Panel("Goodbye!", style="bold yellow"))
+        break
+
+    answer = brain.ask(question, retrieval_config=retrieval_config)
+    # Print the answer with typing effect
+    console.print(f"[bold green]Quivr Assistant[/bold green]: {answer.answer}")
+
+    console.print("-" * console.width)
+
+brain.print_info()
+```
+
+5. You are now all set up to talk with your brain and test different retrieval strategies by simply changing the configuration file!
+
+## Go further
+
+You can go further with Quivr by adding internet search, adding tools, etc. Check the [documentation](https://core.quivr.com/) for more information.
 
 
 ## Contributors ✨
@@ -135,9 +203,6 @@ Did you get a pull request? Open it, and we'll review it as soon as possible. Ch
 - [Open Issues](https://github.com/quivrhq/quivr/issues)
 - [Open Pull Requests](https://github.com/quivrhq/quivr/pulls)
 - [Good First Issues](https://github.com/quivrhq/quivr/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
-- [Frontend Issues](https://github.com/quivrhq/quivr/issues?q=is%3Aopen+is%3Aissue+label%3Afrontend)
-- [Backend Issues](https://github.com/quivrhq/quivr/issues?q=is%3Aopen+is%3Aissue+label%3Abackend)
-- [Translate](https://docs.quivr.app/docs/Developers/contribution/guidelines#translations)
 
 ## Partners ❤️
 
@@ -154,7 +219,3 @@ This project would not be possible without the support of our partners. Thank yo
 ## License 📄
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details
-
-## Stars History 📈
-
-[![Star History Chart](https://api.star-history.com/svg?repos=quivrhq/quivr&type=Timeline)](https://star-history.com/#quivrhq/quivr&Timeline)
